@@ -5,13 +5,46 @@ class UsersController extends Controller {
     public function __construct()
     {
         parent::__construct();
-        // Load model once para magamit sa lahat ng methods
-        $this->call->model('UsersModel');
+        $this->call->model('UsersModel'); // siguraduhin na tama ang pangalan ng model file mo
     }
 
-    public function index(): void
+    public function index()
     {
-        $data['users'] = $this->UsersModel->all();
+        // Current page (default 1)
+        $page = (isset($_GET['page']) && is_numeric($_GET['page'])) ? (int) $_GET['page'] : 1;
+
+        // Search query
+        $q = isset($_GET['q']) ? trim($this->io->get('q')) : '';
+
+        // Records per page
+        $records_per_page = 5;
+
+        // Get data from model
+        $all = $this->UsersModel->page($q, $records_per_page, $page);
+        $data['users'] = $all['records'];
+        $total_rows = $all['total_rows'];
+
+        // Pagination setup
+        $this->pagination->set_options([
+            'first_link'         => '⏮ First',
+            'last_link'          => 'Last ⏭',
+            'next_link'          => 'Next →',
+            'prev_link'          => '← Prev',
+            'page_query_string'  => true,         // gumamit ng query string ?page=
+            'query_string_segment' => 'page',     // param name
+        ]);
+
+        $this->pagination->set_theme('default');
+
+        $this->pagination->initialize(
+            $total_rows,
+            $records_per_page,
+            $page,
+            site_url() . '?q=' . urlencode($q)
+        );
+        $data['page'] = $this->pagination->paginate();
+
+        // Load view
         $this->call->view('users/index', $data);
     }
 
@@ -19,17 +52,17 @@ class UsersController extends Controller {
     {
         if ($this->io->method() == 'post') {
             $username = $this->io->post('username');
-            $email    = $this->io->post('email');
+            $email = $this->io->post('email');
 
-            $data = array(
+            $data = [
                 'username' => $username,
                 'email'    => $email
-            );
+            ];
 
             if ($this->UsersModel->insert($data)) {
-                redirect('users');
+                redirect(site_url(''));
             } else {
-                echo "Error inserting record.";
+                echo "Error in creating user.";
             }
         } else {
             $this->call->view('users/create');
@@ -44,19 +77,19 @@ class UsersController extends Controller {
             return;
         }
 
-        if ($this->io->method() == "post") {
-            $username = $this->io->post("username");
-            $email    = $this->io->post("email");
+        if ($this->io->method() == 'post') {
+            $username = $this->io->post('username');
+            $email    = $this->io->post('email');
 
-            $data = array(
+            $data = [
                 'username' => $username,
                 'email'    => $email
-            );
+            ];
 
             if ($this->UsersModel->update($id, $data)) {
-                redirect('users');
+                redirect(site_url(''));
             } else {
-                echo "Error updating record.";
+                echo "Error in updating user.";
             }
         } else {
             $data['user'] = $user;
@@ -67,10 +100,9 @@ class UsersController extends Controller {
     public function delete($id)
     {
         if ($this->UsersModel->delete($id)) {
-            redirect('users');
+            redirect(site_url(''));
         } else {
-            echo "Error deleting record.";
+            echo "Error in deleting user.";
         }
     }
 }
-?>
