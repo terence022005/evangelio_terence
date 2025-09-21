@@ -9,7 +9,7 @@ class UsersController extends Controller {
 
     public function index(): void
     {
-        $this->call->model('Usersmodel');
+        $this->call->model('UsersModel');
         $data['users'] = $this->Usersmodel->all();
         $this->call->view('users/index', $data);
     }
@@ -65,36 +65,6 @@ class UsersController extends Controller {
             echo "Error deleting record.";
         }
     }
-
-     public function all() 
-    {
-        
-        $page = 1;
-        if(isset($_GET['page']) && ! empty($_GET['page'])) {
-            $page = $this->io->get('page');
-        }
-
-        $q = '';
-        if(isset($_GET['q']) && ! empty($_GET['q'])) {
-            $q = trim($this->io->get('q'));
-        }
-
-        $records_per_page = 10;
-
-        $all = $this->author_model->page($q, $records_per_page, $page);
-        $data['all'] = $all['records'];
-        $total_rows = $all['total_rows'];
-        $this->pagination->set_options([
-            'first_link'     => '⏮ First',
-            'last_link'      => 'Last ⏭',
-            'next_link'      => 'Next →',
-            'prev_link'      => '← Prev',
-            'page_delimiter' => '&page='
-        ]);
-        $this->pagination->set_theme('bootstrap'); // or 'tailwind', or 'custom'
-        $this->pagination->initialize($total_rows, $records_per_page, $page, site_url('user/index').'?q='.$q);
-        $data['page'] = $this->pagination->paginate();
-        $this->call->view('user', $data);
-    }
+    
 }
 ?>
