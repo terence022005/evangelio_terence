@@ -5,66 +5,72 @@ class UsersController extends Controller {
     public function __construct()
     {
         parent::__construct();
+        // Load model once para magamit sa lahat ng methods
+        $this->call->model('UsersModel');
     }
 
     public function index(): void
     {
-        $this->call->model('UsersModel');
-        $data['users'] = $this->Usersmodel->all();
+        $data['users'] = $this->UsersModel->all();
         $this->call->view('users/index', $data);
     }
 
     public function create()
     {
-       if ($this->io->method() == 'post') {
-        
-        $username =$this->io->post('username');
-        $email =$this->io->post('email');
-        $data = array(
-            'username' => $username,
-            'email' => $email
-        );
-        if($this->UsersModel->insert($data)){
-            redirect();
-        }else {
-            echo "Error inserting record.";
+        if ($this->io->method() == 'post') {
+            $username = $this->io->post('username');
+            $email    = $this->io->post('email');
+
+            $data = array(
+                'username' => $username,
+                'email'    => $email
+            );
+
+            if ($this->UsersModel->insert($data)) {
+                redirect('users');
+            } else {
+                echo "Error inserting record.";
+            }
+        } else {
+            $this->call->view('users/create');
         }
-       }else{
-        $this->call->view('users/create');
-       }
     }
 
     public function update($id)
     {
         $user = $this->UsersModel->find($id);
-        if(!$user){
+        if (!$user) {
             echo "User not found.";
             return;
         }
-        if($this->io->method() == "post"){
-            $username =$this->io->post("username");
-            $email =$this->io->post("email");
+
+        if ($this->io->method() == "post") {
+            $username = $this->io->post("username");
+            $email    = $this->io->post("email");
+
             $data = array(
                 'username' => $username,
-                'email' => $email
+                'email'    => $email
             );
-            if($this->UsersModel->update($id, $data)){
-                redirect();
-            }else{
+
+            if ($this->UsersModel->update($id, $data)) {
+                redirect('users');
+            } else {
                 echo "Error updating record.";
             }
-        }else{
+        } else {
             $data['user'] = $user;
             $this->call->view('users/update', $data);
         }
     }
-    function delete($id){
-        if($this->UsersModel->delete($id)){
-            redirect();
-        }else{
+
+    public function delete($id)
+    {
+        if ($this->UsersModel->delete($id)) {
+            redirect('users');
+        } else {
             echo "Error deleting record.";
         }
     }
-    
 }
 ?>
