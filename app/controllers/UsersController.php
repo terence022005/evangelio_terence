@@ -61,7 +61,7 @@ class UsersController extends Controller {
                 'username' => $username,
                 'email' => $email
             );
-            if($this->Usersmodel->insert($data)) {
+            if($this->UsersModel->insert($data)) {
                 redirect();
             } else {
                 echo "Error inserting record.";
