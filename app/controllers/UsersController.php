@@ -73,7 +73,7 @@ class UsersController extends Controller {
 
     function update($id)
     {
-        $user = $this->Usersmodel->find($id);
+        $user = $this->UsersModel->find($id);
         if (!$user) {
             echo "User not found.";
             return;
