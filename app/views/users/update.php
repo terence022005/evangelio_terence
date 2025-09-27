@@ -1,61 +1,149 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Update</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Update User</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f4f6f9;
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .form-card {
+      width: 100%;
+      max-width: 450px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    .form-card h1 {
+      text-align: center;
+      font-size: 1.8em;
+      font-weight: 600;
+      color: #0d47a1;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      position: relative;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 1em;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #fff;
+      color: #333;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #0d47a1;
+      outline: none;
+      box-shadow: 0 0 6px rgba(13,71,161,0.3);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 1.1em;
+      color: #0d47a1;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: #0d47a1;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn-submit:hover {
+      background: #1565c0;
+    }
+
+    .btn-return {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      padding: 12px;
+      background: #6c757d;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .btn-return:hover {
+      background: #5a6268;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 flex items-center justify-center min-h-screen">
-
-  <div class="bg-white/90 backdrop-blur p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all hover:scale-[1.02]">
-    <!-- Title -->
-    <h1 class="text-3xl font-extrabold text-center text-emerald-700 mb-2">Update Record</h1>
-
-    <!-- Form -->
-    <form action="<?= site_url('users/update/' .segment(4)); ?>" method="POST" class="space-y-5">
+<body>
+  <div class="form-card">
+    <h1>Update User</h1>
+    <form action="<?=site_url('users/update/'.$user['id'])?>" method="POST">
+      <div class="form-group">
+        <input type="text" name="username" value="<?=html_escape($user['username']);?>" placeholder="Username" required>
+      </div>
+      <div class="form-group">
+        <input type="email" name="email" value="<?=html_escape($user['email']);?>" placeholder="Email" required>
+      </div>
       
-      <!-- Username -->
-      <div>
-        <label for="username" class="block text-sm font-semibold text-gray-700 mb-1">Username</label>
-        <div class="relative">
-          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-            <!-- Icon: User -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A9.969 9.969 0 0112 15c2.21 0 4.243.72 5.879 1.929M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </span>
-          <input type="text" id="username" name="username" 
-            value="<?= html_escape($user['username']); ?>" 
-            required
-            class="pl-10 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200">
+      <?php if(!empty($logged_in_user) && $logged_in_user['role'] === 'admin'): ?>
+        <div class="form-group">
+          <select name="role" required>
+            <option value="user" <?= $user['role'] === 'user' ? 'selected' : ''; ?>>User</option>
+            <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : ''; ?>>Admin</option>
+          </select>
         </div>
-      </div>
 
-      <!-- Email -->
-      <div>
-        <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-        <div class="relative">
-          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-            <!-- Icon: Mail -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H8m0 0l-4-4m4 4l-4 4m16-4h-8" />
-            </svg>
-          </span>
-          <input type="email" id="email" name="email" 
-            value="<?= html_escape($user['email']); ?>" 
-            required
-            class="pl-10 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200">
+        <div class="form-group">
+          <input type="password" placeholder="Password" name="password" id="password" required>
+          <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
         </div>
-      </div>
+      <?php endif; ?>
 
-      <!-- Submit Button -->
-      <button type="submit"
-        class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:from-emerald-700 hover:to-teal-700 hover:shadow-lg transition duration-300">
-        Update
-      </button>
+      <button type="submit" class="btn-submit">Update User</button>
     </form>
+    <a href="<?=site_url('/users');?>" class="btn-return">Return to Home</a>
   </div>
 
+  <script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+
+    if(togglePassword){
+      togglePassword.addEventListener('click', function () {
+        const type = password.type === 'password' ? 'text' : 'password';
+        password.type = type;
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+    }
+  </script>
 </body>
 </html>
