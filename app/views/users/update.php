@@ -1,39 +1,64 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Update User</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
+    /* Background */
     body {
-      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
       font-family: "Poppins", sans-serif;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      padding: 20px;
+      background-color: #0b0c1b;
+      overflow: hidden;
+      position: relative;
     }
 
-    .form-card {
+    /* Floating background squares */
+    body::before {
+      content: "";
+      position: absolute;
       width: 100%;
-      max-width: 450px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-      padding: 30px;
+      height: 100%;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 50px,
+        rgba(255, 255, 255, 0.02) 50px,
+        rgba(255, 255, 255, 0.02) 100px
+      );
+      z-index: 0;
     }
 
-    .form-card h1 {
+    /* Card container */
+    .form-card {
+      position: relative;
+      z-index: 10;
+      background: #141625;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.25);
+      padding: 40px 35px;
+      width: 350px;
       text-align: center;
+      color: #fff;
+    }
+
+    /* Title */
+    .form-card h1 {
       font-size: 1.8em;
       font-weight: 600;
-      color: #0d47a1;
       margin-bottom: 25px;
+      color: #00e5ff;
+      text-shadow: 0 0 10px #00e5ff;
     }
 
+    /* Input fields */
     .form-group {
       margin-bottom: 18px;
       position: relative;
@@ -43,62 +68,63 @@
     .form-group select {
       width: 100%;
       padding: 12px 15px;
-      font-size: 1em;
+      border: none;
       border-radius: 6px;
-      border: 1px solid #ccc;
-      background: #fff;
-      color: #333;
+      background: #1f2233;
+      color: #fff;
+      font-size: 0.95em;
+      outline: none;
+      transition: 0.3s;
     }
 
     .form-group input:focus,
     .form-group select:focus {
-      border-color: #0d47a1;
-      outline: none;
-      box-shadow: 0 0 6px rgba(13,71,161,0.3);
+      box-shadow: 0 0 8px #00e5ff;
+      border: 1px solid #00e5ff;
     }
 
+    /* Password toggle icon */
     .toggle-password {
       position: absolute;
       right: 15px;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
-      font-size: 1.1em;
-      color: #0d47a1;
+      color: #00e5ff;
     }
 
+    /* Button styles */
     .btn-submit {
       width: 100%;
-      padding: 14px;
-      background: #0d47a1;
-      color: #fff;
+      padding: 12px;
       border: none;
       border-radius: 6px;
-      font-size: 1.1em;
-      font-weight: 500;
+      font-weight: 600;
+      font-size: 1em;
       cursor: pointer;
+      background: linear-gradient(90deg, #00ffcc, #00bfff);
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
       transition: 0.3s;
     }
 
     .btn-submit:hover {
-      background: #1565c0;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+      transform: scale(1.03);
     }
 
+    /* Return button */
     .btn-return {
       display: block;
-      text-align: center;
-      margin-top: 15px;
-      padding: 12px;
-      background: #6c757d;
-      color: #fff;
-      border-radius: 6px;
+      margin-top: 20px;
+      color: #00e5ff;
       text-decoration: none;
-      font-weight: 500;
+      font-size: 0.9em;
       transition: 0.3s;
     }
 
     .btn-return:hover {
-      background: #5a6268;
+      text-shadow: 0 0 8px #00e5ff;
     }
   </style>
 </head>
@@ -112,7 +138,7 @@
       <div class="form-group">
         <input type="email" name="email" value="<?=html_escape($user['email']);?>" placeholder="Email" required>
       </div>
-      
+
       <?php if(!empty($logged_in_user) && $logged_in_user['role'] === 'admin'): ?>
         <div class="form-group">
           <select name="role" required>
@@ -135,8 +161,7 @@
   <script>
     const togglePassword = document.querySelector('#togglePassword');
     const password = document.querySelector('#password');
-
-    if(togglePassword){
+    if (togglePassword) {
       togglePassword.addEventListener('click', function () {
         const type = password.type === 'password' ? 'text' : 'password';
         password.type = type;
